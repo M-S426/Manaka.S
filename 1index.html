@@ -56,6 +56,15 @@
       margin-bottom: 15px;
       color: #333;
     }
+    .volume-control {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .volume-slider {
+      width: 100px;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
@@ -68,22 +77,27 @@
       </div>
       <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
     </div>
+    <div class="volume-control">
+      <label for="volumeSlider">Volume:</label>
+      <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="1">
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // ここにMP3ファイルのURLを設定します。この部分は後で変更します。
-      const audioUrl = 'https://m-s426.github.io/Manaka.S/1name.mp3';
+      const audioUrl = 'https://m-s426.github.io/Manaka.S/7uta.mp3';
 
       const audio = new Audio(audioUrl);
       const playBtn = document.getElementById('playBtn');
       const progressBar = document.getElementById('progressBar');
       const progress = document.getElementById('progress');
       const timeDisplay = document.getElementById('timeDisplay');
+      const volumeSlider = document.getElementById('volumeSlider');
       let isPlaying = false;
 
       // 音声のタイトルを設定
-      document.querySelector('.audio-title').textContent = '名前';
+      document.querySelector('.audio-title').textContent = '紅結び（織田かおり）【Cover 真仲冴枝】';
 
       // 再生/一時停止ボタンの処理
       playBtn.addEventListener('click', function() {
@@ -124,8 +138,12 @@
         seconds = Math.floor(seconds % 60);
         return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
       }
+
+      // 音量の調整
+      volumeSlider.addEventListener('input', function() {
+        audio.volume = this.value;
+      });
     });
   </script>
 </body>
 </html>
-
