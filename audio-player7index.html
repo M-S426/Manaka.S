@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>シンプルオーディオプレーヤー</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .audio-player {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .player-controls {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .play-btn {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+    .progress-bar {
+      flex-grow: 1;
+      height: 8px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .progress {
+      height: 100%;
+      background-color: #4a90e2;
+      width: 0%;
+    }
+    .time-display {
+      margin-left: 15px;
+      font-size: 14px;
+      color: #666;
+    }
+    .audio-title {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="audio-player">
+    <h3 class="audio-title">音声タイトル</h3>
+    <div class="player-controls">
+      <button class="play-btn" id="playBtn">▶</button>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // ここにMP3ファイルのURLを設定します
+      const audioUrl = 'https://drive.google.com/uc?export=open&id=1JBUN3YwlPJNA0S5KA4vZ2ApNpRuDr9xN';
+      
+      const audio = new Audio(audioUrl);
+      const playBtn = document.getElementById('playBtn');
+      const progressBar = document.getElementById('progressBar');
+      const progress = document.getElementById('progress');
+      const timeDisplay = document.getElementById('timeDisplay');
+      let isPlaying = false;
+      
+      // 音声のタイトルを設定
+      document.querySelector('.audio-title').textContent = '音声タイトル（ここを変更）';
+      
+      // 再生/一時停止ボタンの処理
+      playBtn.addEventListener('click', function() {
+        if (isPlaying) {
+          audio.pause();
+          playBtn.textContent = '▶';
+          isPlaying = false;
+        } else {
+          audio.play();
+          playBtn.textContent = '⏸';
+          isPlaying = true;
+        }
+      });
+      
+      // プログレスバーのクリック処理
+      progressBar.addEventListener('click', function(e) {
+        const clickPosition = (e.clientX - this.getBoundingClientRect().left) / this.offsetWidth;
+        const newTime = clickPosition * audio.duration;
+        audio.currentTime = newTime;
+        progress.style.width = (clickPosition * 100) + '%';
+      });
+      
+      // 再生中のプログレスバー更新
+      audio.addEventListener('timeupdate', function() {
+        const currentTime = audio.currentTime;
+        const duration = audio.duration;
+        const progressPercent = (currentTime / duration) * 100;
+        progress.style.width = progressPercent + '%';
+        
+        // 時間表示の更新
+        timeDisplay.textContent = formatTime(currentTime) + ' / ' + formatTime(duration);
+      });
+      
+      // 時間のフォーマット
+      function formatTime(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const minutes = Math.floor(seconds / 60);
+        seconds = Math.floor(seconds % 60);
+        return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+      }
+    });
+  </script>
+</body>
+</html>
