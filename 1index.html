@@ -73,7 +73,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // ここにMP3ファイルのURLを設定します。この部分は後で変更します。
-      const audioUrl = 'https://m-s426.github.io/Manaka.S/1.【名前】真仲冴枝.mp3';
+      const audioUrl = 'https://m-s426.github.io/Manaka.S/1name.mp3';
 
       const audio = new Audio(audioUrl);
       const playBtn = document.getElementById('playBtn');
@@ -83,7 +83,7 @@
       let isPlaying = false;
 
       // 音声のタイトルを設定
-      document.querySelector('.audio-title').textContent = '音声タイトル（ここを変更）';
+      document.querySelector('.audio-title').textContent = '名前';
 
       // 再生/一時停止ボタンの処理
       playBtn.addEventListener('click', function() {
