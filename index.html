@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>複数オーディオプレーヤー</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .audio-player {
+            max-width: 500px;
+            margin: 20px auto; /* Add margin to separate players */
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .play-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4a90e2;
+            width: 0%;
+        }
+
+        .time-display {
+            margin-left: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .audio-title {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+  <div id="player-container">
+    <!-- ここにJavaScriptでプレイヤーが追加される -->
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const playerContainer = document.getElementById('player-container');
+      const audioData = [
+          { title: '音源1のタイトル', url: '音源1のURL' },
+          { title: '音源2のタイトル', url: '音源2のURL' },
+          { title: '音源3のタイトル', url: '音源3のURL' }
+      ];
+
+      audioData.forEach((audioInfo, index) => {
+          const playerDiv = document.createElement('div');
+          playerDiv.classList.add('audio-player');
+          playerDiv.innerHTML = `
+              <h3 class="audio-title">${audioInfo.title}</h3>
+              <div class="player-controls">
+                  <button class="play-btn" id="playBtn-${index}">▶</button>
+                  <div class="progress-bar" id="progressBar-${index}">
+                      <div class="progress" id="progress-${index}"></div>
+                  </div>
+                  <div class="time-display" id="timeDisplay-${index}">0:00 / 0:00</div>
+              </div>
+          `;
+          playerContainer.appendChild(playerDiv);
+
+          const audio = new Audio(audioInfo.url);
+          const playBtn = document.getElementById(`playBtn-${index}`);
+          const progressBar = document.getElementById(`progressBar-${index}`);
+          const progress = document.getElementById(`progress-${index}`);
+          const timeDisplay = document.getElementById(`timeDisplay-${index}`);
+          let isPlaying = false;
+
+          // 再生/一時停止ボタンの処理
+          playBtn.addEventListener('click', function() {
+              if (isPlaying) {
+                  audio.pause();
+                  playBtn.textContent = '▶';
+                  isPlaying = false;
+              } else {
+                  audio.play();
+                  playBtn.textContent = '⏸';
+                  isPlaying = true;
+              }
+          });
+
+          // プログレスバーのクリック処理
+          progressBar.addEventListener('click', function(e) {
+              const clickPosition = (e.clientX - this.getBoundingClientRect().left) / this.offsetWidth;
+              const newTime = clickPosition * audio.duration;
+              audio.currentTime = newTime;
+              progress.style.width = (clickPosition * 100) + '%';
+          });
+
+          // 再生中のプログレスバー更新
+          audio.addEventListener('timeupdate', function() {
+              const currentTime = audio.currentTime;
+              const duration = audio.duration;
+              const progressPercent = (currentTime / duration) * 100;
+              progress.style.width = progressPercent + '%';
+
+              // 時間表示の更新
+              timeDisplay.textContent = formatTime(currentTime) + ' / ' + formatTime(duration);
+          });
+
+          // 時間のフォーマット
+          function formatTime(seconds) {
+              if (isNaN(seconds)) return '0:00';
+              const minutes = Math.floor(seconds / 60);
+              seconds = Math.floor(seconds % 60);
+              return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+          }
+      });
+    });
+  </script>
+</body>
+</html>
